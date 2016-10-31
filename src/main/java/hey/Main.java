@@ -9,12 +9,32 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
+import javax.inject.Inject;
 import javax.swing.JOptionPane;
 
+import core.api.Manager;
+
+
 public class Main {
+	
+	@Inject
+	private static Manager manager;
+	
 	public static void main(String [] arguments){
+		manager.start();
+
+
 		
+
+	    System.out.println("end of main");
+		
+	}
+	
+	public void configTray(){
 	    //checking for support
 	    if(!SystemTray.isSupported()){
 	        System.out.println("System tray is not supported !!! ");
@@ -60,7 +80,5 @@ public class Main {
 	    }catch(AWTException awtException){
 	        awtException.printStackTrace();
 	    }
-	    System.out.println("end of main");
-		
 	}
 }
