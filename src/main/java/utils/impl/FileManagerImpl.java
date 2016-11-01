@@ -19,7 +19,8 @@ import org.springframework.stereotype.Component;
 
 import utils.api.FileManager;
 
-@Named("fm")
+//@Named("fm")
+@Component("fileManager")
 public class FileManagerImpl implements FileManager{
 	
 	final String CONFIG_FILE = "config/config.json";

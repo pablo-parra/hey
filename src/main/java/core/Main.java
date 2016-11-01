@@ -17,9 +17,13 @@ import java.net.URLConnection;
 import javax.inject.Inject;
 import javax.swing.JOptionPane;
 
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
 import core.api.Manager;
 
-
+@Configuration
+@ComponentScan("utils")
 public class Main {
 	
 	@Inject
