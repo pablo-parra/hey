@@ -2,18 +2,27 @@ package utils.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import javax.inject.Named;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.stereotype.Component;
 
 import utils.api.FileManager;
 
+@Named("fm")
 public class FileManagerImpl implements FileManager{
 	
-	final String CONFIG = "config.properties";
+	final String CONFIG_FILE = "config/config.json";
 	final String HEY_DIR = ".hey";
 	final String STATUS_FILE = "status.json";
 	final String USER_DIR = "user.home";
@@ -39,24 +48,22 @@ public class FileManagerImpl implements FileManager{
 		}
 
 	}
-
-	public String getAppProperty(String propertyName) {
-		String response = null;
+	
+	public String getConfigProperty(String propertyName){
+		JSONParser parser = new JSONParser();
+		
 		try {
-			Properties prop = new Properties();
-			InputStream config = null;
-
-				config = new FileInputStream(CONFIG);
-
-				// load a properties file
-				prop.load(config);
-				response = prop.getProperty(propertyName);
-				return response;
+			ClassLoader classLoader = getClass().getClassLoader();
+			String result = IOUtils.toString(classLoader.getResourceAsStream(CONFIG_FILE));
+	        Object obj = parser.parse(result);
+	        JSONObject jsonObject = (JSONObject) obj;
+	        return (String) jsonObject.get(propertyName);
 			
 		} catch (Exception e) {
-			System.out.println("ERROR IN getAppProperty: " + e.getMessage());
+			System.out.println("ERROR IN getConfigProperty: " + e.getMessage());
 			return null;
 		}
+
 	}
 	
 	private void createStatusFile(){
@@ -66,7 +73,7 @@ public class FileManagerImpl implements FileManager{
 			if(!heyDir.exists()){
 				heyDir.mkdirs();	
 				Path statusPath = heyDir.toPath();
-		        String content = "{\"available\":true}";
+		        String content = "{\"available\":false}";
 		          
 		        File statusFile = statusPath.resolve(STATUS_FILE).toFile();
 		        FileUtils.writeStringToFile(statusFile, content, "UTF-8");

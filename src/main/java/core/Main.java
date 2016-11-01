@@ -1,4 +1,5 @@
-package hey;
+package core;
+
 
 import java.awt.AWTException;
 import java.awt.Image;

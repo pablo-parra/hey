@@ -14,10 +14,10 @@ public class ManagerImpl implements Manager{
 	@Inject
 	private FileManager fileManager;
 	
-	final String URL = "app.url";
+	final String URL = "url";
 	
 	public void start(){
-		String url = fileManager.getAppProperty(URL);
+		String url = fileManager.getConfigProperty(URL);
 		boolean lastStatus = fileManager.getLastStatus();
 		if(net.connectionAvailable(url)){
 			
