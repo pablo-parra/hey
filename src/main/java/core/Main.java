@@ -31,10 +31,6 @@ public class Main {
 	
 	public static void main(String [] arguments){
 		manager.start();
-
-
-		
-
 	    System.out.println("end of main");
 		
 	}

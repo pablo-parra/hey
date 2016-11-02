@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import utils.api.FileManager;
 
-//@Named("fm")
 @Component("fileManager")
 public class FileManagerImpl implements FileManager{
 	
@@ -27,25 +26,41 @@ public class FileManagerImpl implements FileManager{
 	final String HEY_DIR = ".hey";
 	final String STATUS_FILE = "status.json";
 	final String USER_DIR = "user.home";
+	final String STATUS_PROPERTY = "available";
 	
 
 	public boolean getLastStatus() {
-		if (statusFileExist()){
-			return true;
+		File statusFile = getStatusFile();
+		if (statusFile.exists()){
+			return getStatus(statusFile);
 		}else{
 			createStatusFile();
 			return false;
 		}
 	}
 	
-	private boolean statusFileExist(){
+	public boolean getStatus(File statusFile){
+		try {
+			JSONParser parser = new JSONParser();
+			InputStream is = new FileInputStream(statusFile);
+	        Object obj = parser.parse(IOUtils.toString(is));
+	        JSONObject jsonObject = (JSONObject) obj;
+	        String status = (String) jsonObject.get(STATUS_PROPERTY);
+	        return Boolean.parseBoolean(status); 
+		} catch (Exception e) {
+			System.out.println("ERROR IN getStatus: " + e.getMessage());
+			return false;
+		}
+	}
+	
+	private File getStatusFile(){
 		try {
 			String currentUserHomeDir = System.getProperty(USER_DIR);
-			File statusFile = new File(currentUserHomeDir + File.separator + HEY_DIR + File.separator + STATUS_FILE);
-			return statusFile.exists();
+			return new File(currentUserHomeDir + File.separator + HEY_DIR + File.separator + STATUS_FILE);
+			
 		} catch (Exception e) {
-			System.out.println("ERROR IN statusFileExist: " + e.getMessage());
-			return false;
+			System.out.println("ERROR IN getStatusFile: " + e.getMessage());
+			return null;
 		}
 
 	}

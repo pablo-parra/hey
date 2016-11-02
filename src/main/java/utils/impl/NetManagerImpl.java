@@ -3,9 +3,12 @@ package utils.impl;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import utils.api.Net;
+import org.springframework.stereotype.Component;
 
-public class NetImpl implements Net{
+import utils.api.NetManager;
+
+@Component("NetManager")
+public class NetManagerImpl implements NetManager{
 
 	public boolean connectionAvailable(String url) {
 		boolean result = false;

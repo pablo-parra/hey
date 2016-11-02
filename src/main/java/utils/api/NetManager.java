@@ -2,6 +2,6 @@ package utils.api;
 
 import java.net.URL;
 
-public interface Net {
+public interface NetManager {
 	boolean connectionAvailable(String url);
 }
