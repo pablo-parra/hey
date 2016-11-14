@@ -24,46 +24,49 @@ public class FileManagerImpl implements FileManager{
 	
 	final String CONFIG_FILE = "config/config.json";
 	final String HEY_DIR = ".hey";
-	final String STATUS_FILE = "status.json";
+	//final String STATUS_FILE = "status.json";
 	final String USER_DIR = "user.home";
-	final String STATUS_PROPERTY = "available";
+	//final String STATUS_PROPERTY = "available";
+
 	
 
-	public boolean getLastStatus() {
-		File statusFile = getStatusFile();
-		if (statusFile.exists()){
-			return getStatus(statusFile);
-		}else{
-			createStatusFile();
-			return false;
-		}
-	}
+//	public boolean getLastStatus() {
+//		File statusFile = getStatusFile();
+//		if (statusFile.exists()){
+//			return getStatus(statusFile);
+//		}else{
+//			createStatusFile();
+//			return false;
+//		}
+//	}
 	
-	public boolean getStatus(File statusFile){
-		try {
-			JSONParser parser = new JSONParser();
-			InputStream is = new FileInputStream(statusFile);
-	        Object obj = parser.parse(IOUtils.toString(is));
-	        JSONObject jsonObject = (JSONObject) obj;
-	        String status = (String) jsonObject.get(STATUS_PROPERTY);
-	        return Boolean.parseBoolean(status); 
-		} catch (Exception e) {
-			System.out.println("ERROR IN getStatus: " + e.getMessage());
-			return false;
-		}
-	}
-	
-	private File getStatusFile(){
-		try {
-			String currentUserHomeDir = System.getProperty(USER_DIR);
-			return new File(currentUserHomeDir + File.separator + HEY_DIR + File.separator + STATUS_FILE);
-			
-		} catch (Exception e) {
-			System.out.println("ERROR IN getStatusFile: " + e.getMessage());
-			return null;
-		}
 
-	}
+	
+//	public boolean getStatus(File statusFile){
+//		try {
+//			JSONParser parser = new JSONParser();
+//			InputStream is = new FileInputStream(statusFile);
+//	        Object obj = parser.parse(IOUtils.toString(is));
+//	        JSONObject jsonObject = (JSONObject) obj;
+//	        String status = (String) jsonObject.get(STATUS_PROPERTY);
+//	        return Boolean.parseBoolean(status); 
+//		} catch (Exception e) {
+//			System.out.println("ERROR IN getStatus: " + e.getMessage());
+//			return false;
+//		}
+//	}
+	
+//	private File getStatusFile(){
+//		try {
+//			String currentUserHomeDir = System.getProperty(USER_DIR);
+//			return new File(currentUserHomeDir + File.separator + HEY_DIR + File.separator + STATUS_FILE);
+//			
+//		} catch (Exception e) {
+//			System.out.println("ERROR IN getStatusFile: " + e.getMessage());
+//			return null;
+//		}
+//
+//	}
 	
 	public String getConfigProperty(String propertyName){
 		JSONParser parser = new JSONParser();
@@ -82,22 +85,22 @@ public class FileManagerImpl implements FileManager{
 
 	}
 	
-	private void createStatusFile(){
-		try {
-			String currentUserHomeDir = System.getProperty(USER_DIR);
-			File heyDir = new File(currentUserHomeDir + File.separator + HEY_DIR);
-			if(!heyDir.exists()){
-				heyDir.mkdirs();	
-				Path statusPath = heyDir.toPath();
-		        String content = "{\"available\":false}";
-		          
-		        File statusFile = statusPath.resolve(STATUS_FILE).toFile();
-		        FileUtils.writeStringToFile(statusFile, content, "UTF-8");
-		        System.out.println("Created status file");
-			}
-		} catch (Exception e) {
-			System.out.println("ERROR IN createStatusFile: " + e.getMessage());
-		}
-	}
+//	private void createStatusFile(){
+//		try {
+//			String currentUserHomeDir = System.getProperty(USER_DIR);
+//			File heyDir = new File(currentUserHomeDir + File.separator + HEY_DIR);
+//			if(!heyDir.exists()){
+//				heyDir.mkdirs();	
+//				Path statusPath = heyDir.toPath();
+//		        String content = "{\"available\":false}";
+//		          
+//		        File statusFile = statusPath.resolve(STATUS_FILE).toFile();
+//		        FileUtils.writeStringToFile(statusFile, content, "UTF-8");
+//		        System.out.println("Created status file");
+//			}
+//		} catch (Exception e) {
+//			System.out.println("ERROR IN createStatusFile: " + e.getMessage());
+//		}
+//	}
 	
 }
