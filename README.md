@@ -6,6 +6,6 @@ Sounds silly but if the company where you work blocks sites like Spotify in an u
 Programmed by pure fun after my kids fall asleep.
 
 Credits for the icons used:
-- link:http://www.flaticon.com/free-icon/oval_137094[oval]
-- link:http://www.flaticon.com/free-icon/circle_137151[circle]
+- http://www.flaticon.com/free-icon/cocktail_168558
+- http://www.flaticon.com/free-icon/unchecked_169768
 

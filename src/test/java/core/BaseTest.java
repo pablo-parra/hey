@@ -9,6 +9,7 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -36,12 +37,12 @@ public class BaseTest {
 	private FileManager fileManager;
 	private PropertyManager propertyManager;
 	
-	String URL;
+	String URL = "url";;
+	String IMG_OK = "/img/ok.png";
+	String IMG_KO = "/img/ko.png";
 	
 	@Before
 	public void init(){
-		URL = "url";
-		
 		//1
 		//fileManager = new FileManagerImpl();
 		
@@ -93,9 +94,18 @@ public class BaseTest {
 	}
 	
 	@Test
+	public void getImagesFromResources(){
+		Object img_ko = getClass().getResource(IMG_KO);
+		Object img_ok = getClass().getResource(IMG_OK);
+		assertThat(img_ko).isNotNull();
+		assertThat(img_ok).isNotNull();
+	}
+	
+	@Test
 	public void addToTray(){
-		Image image = Toolkit.getDefaultToolkit().getImage("D:\\DEV\\hey\\src\\main\\resources\\img\\green_ball.png");
-	    //popupmenu
+		Image img_ok = Toolkit.getDefaultToolkit().getImage(getClass().getResource(IMG_OK));
+	    Image img_ko = Toolkit.getDefaultToolkit().getImage(getClass().getResource(IMG_KO)); 
+		//popupmenu
 	    PopupMenu trayPopupMenu = new PopupMenu();
 
 	    //1t menuitem for popupmenu
@@ -117,7 +127,7 @@ public class BaseTest {
 	    trayPopupMenu.add(close);
 
 	    //setting tray icon
-	    TrayIcon trayIcon = new TrayIcon(image, "SystemTray Demo", trayPopupMenu);
+	    TrayIcon trayIcon = new TrayIcon(img_ok, "AVAILABLE", trayPopupMenu);
 	    SystemTray tray = SystemTray.getSystemTray();
 	    trayIcon.setImageAutoSize(true);
 
@@ -129,6 +139,11 @@ public class BaseTest {
 		
 		TrayIcon[] icons = tray.getTrayIcons();
 		assertThat(icons.length).isEqualTo(1);
+		
+		icons[0].displayMessage("Voy a cambiar el Icono", "sabes o qué?", MessageType.INFO);
+		icons[0].setImage(img_ko);
+		TrayIcon[] iconsAgain = tray.getTrayIcons();
+		assertThat(iconsAgain.length).isEqualTo(1);
 
 	}
 }
