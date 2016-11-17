@@ -1,6 +1,7 @@
 package core.impl;
 
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,7 +15,10 @@ import core.Main;
 import core.api.Manager;
 import utils.api.FileManager;
 import utils.api.NetManager;
+import utils.api.NotificationManager;
 import utils.api.PropertyManager;
+
+import com.google.common.base.Optional;
 
 @Component("mainManager")
 public class ManagerImpl implements Manager{
@@ -25,6 +29,8 @@ public class ManagerImpl implements Manager{
 	private FileManager fileManager;
 	
 	private PropertyManager propertyManager;
+	
+	private NotificationManager notificationManager;
 	
 	final String URL = "url";
 	
@@ -40,41 +46,37 @@ public class ManagerImpl implements Manager{
 			
 	        //Byname Autowiring
 	        fileManager = (FileManager)context.getBean("fileManager");
-	        netManager = (NetManager)context.getBean("NetManager");
+	        netManager = (NetManager)context.getBean("netManager");
 	        propertyManager = (PropertyManager)context.getBean("propertyManager");
+	        notificationManager = (NotificationManager)context.getBean("notificationManager");
 	        
-			String url = fileManager.getConfigProperty(URL);
-			lastStatus = propertyManager.getLastStatus();
-			webIsAvailable = netManager.connectionAvailable(url);
-			int loopTime = Integer.parseInt(fileManager.getConfigProperty(TIMER));
-			
-		    // Clase en la que está el código a ejecutar 
-		     TimerTask timerTask = new TimerTask() 
-		     { 
-		         public void run()  
-		         { 
-		     		if(webIsAvailable != lastStatus){
-		    			if(webIsAvailable){
-		    				//notifyAvailability
-		    				System.out.println("IS AVAILABLE");
-		    				//change tray icon
-		    			}else{
-		    				//notifyUnavailability
-		    				System.out.println("NOOOOOOO");
-		    				//change try icon
-		    			}
-		    		}
-		         } 
-		     }; 
+	        
+	        Optional<String> urlProperty = (Optional<String>) fileManager.getConfigProperty(URL);
+	        
+	        if(urlProperty.isPresent()){
 
+//				lastStatus = propertyManager.getLastStatus();
+//				webIsAvailable = netManager.connectionAvailable(urlProperty.get().toString());
+				
+				Optional<Long> timerProperty = (Optional<Long>) fileManager.getConfigProperty(TIMER);
+				
+				if (timerProperty.isPresent()){
+					
+					launchHeyProcess(urlProperty.get().toString(), Long.parseLong(timerProperty.get().toString()));
 
-		      // Aquí se pone en marcha el timer cada segundo. 
-		     Timer timer = new Timer(); 
-		     // Dentro de 0 milisegundos avísame cada 1000 milisegundos 
-		     timer.scheduleAtFixedRate(timerTask, 0, loopTime);
+				}else{
+					System.out.println("No TIMER parameter defined in the config.json file");
+				}
+
+	        }else{
+	        	// TODO: implement Logger?
+	        	System.out.println("No URL parameter defined in the config.json file");
+	        }
+
 			
 		} catch (Exception e) {
 			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}finally{
 			if (context != null) context.close();
 		}
@@ -83,4 +85,43 @@ public class ManagerImpl implements Manager{
 
         
 	}
+
+	private void launchHeyProcess(final String url, long loopInterval) {
+
+		
+	     TimerTask timerTask = new TimerTask() 
+	     { 
+	         public void run()  
+	         { 
+	     		lastStatus = propertyManager.getLastStatus();
+	    		webIsAvailable = netManager.connectionAvailable(url);	
+	    		
+	     		if(webIsAvailable != lastStatus){
+	     			
+		    		System.out.println(LocalDateTime.now() + " | "+url+" | CHANGE REGISTERED --> WebIsAvailable: " + webIsAvailable + " -- LastStatus: " + lastStatus);
+		    		
+	    			if(webIsAvailable){
+	    				//notifyAvailability
+	    				System.out.println("IS AVAILABLE");
+	    				notificationManager.notifyAvailability();
+	    				lastStatus = true;
+	    				//change tray icon
+	    			}else{
+	    				//notifyUnavailability
+	    				System.out.println("NOOOOOOO");
+	    				notificationManager.notifyUnavailability();
+	    				lastStatus = false;
+	    				//change try icon
+	    			}
+	    			propertyManager.setLastStatus(lastStatus);
+	    		}
+	         } 
+	     }; 
+	     
+	     Timer timer = new Timer(); 
+
+	     timer.scheduleAtFixedRate(timerTask, 0, loopInterval);
+		
+	}
+
 }

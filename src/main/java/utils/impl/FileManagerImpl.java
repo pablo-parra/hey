@@ -17,6 +17,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Optional;
+
 import utils.api.FileManager;
 
 @Component("fileManager")
@@ -68,21 +70,22 @@ public class FileManagerImpl implements FileManager{
 //
 //	}
 	
-	public String getConfigProperty(String propertyName){
+	public Optional<Object> getConfigProperty(String propertyName){
 		JSONParser parser = new JSONParser();
-		
+		Object property = null;
 		try {
 			ClassLoader classLoader = getClass().getClassLoader();
 			String result = IOUtils.toString(classLoader.getResourceAsStream(CONFIG_FILE));
 	        Object obj = parser.parse(result);
 	        JSONObject jsonObject = (JSONObject) obj;
-	        return (String) jsonObject.get(propertyName);
+	        property = jsonObject.get(propertyName);
+	        return Optional.of(property);
 			
 		} catch (Exception e) {
 			System.out.println("ERROR IN getConfigProperty: " + e.getMessage());
 			return null;
 		}
-
+		
 	}
 	
 //	private void createStatusFile(){

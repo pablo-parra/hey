@@ -2,5 +2,5 @@ package utils.api;
 
 public interface FileManager {
 
-	String getConfigProperty(String propertyName);
+	Object getConfigProperty(String propertyName);
 }

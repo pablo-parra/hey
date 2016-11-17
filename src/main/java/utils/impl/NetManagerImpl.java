@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import utils.api.NetManager;
 
-@Component("NetManager")
+@Component("netManager")
 public class NetManagerImpl implements NetManager{
 
 	public boolean connectionAvailable(String url) {
@@ -15,10 +15,9 @@ public class NetManagerImpl implements NetManager{
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 			if (connection.getResponseCode() == 200){
-				System.out.println("OK");
 				result = true;
 			}else {
-				System.out.println("NOOOO");
+				System.out.println(url + " NOT AVAILABLE");
 			}
 		} catch (Exception e) {
 			// TODO: implement LOG

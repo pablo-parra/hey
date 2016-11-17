@@ -19,4 +19,9 @@ public class PropertyManagerImpl implements PropertyManager{
 		}
 	}
 
+	public void setLastStatus(boolean statusUpdated) {
+		
+		System.setProperty(STATUS, statusUpdated ? "true" : "false");
+	}
+
 }
