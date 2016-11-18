@@ -16,7 +16,7 @@ public class Main {
     	AbstractApplicationContext  context = new AnnotationConfigApplicationContext(Main.class);
     	Manager mainManager = (Manager)context.getBean("mainManager");
 		mainManager.start();
-	    System.out.println("end");
+	    System.out.println("Hey app launched...");
 	    if (context != null) context.close();
 	}
 }

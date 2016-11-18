@@ -101,13 +101,13 @@ public class ManagerImpl implements Manager{
 		    		System.out.println(LocalDateTime.now() + " | "+url+" | CHANGE REGISTERED --> WebIsAvailable: " + webIsAvailable + " -- LastStatus: " + lastStatus);
 		    		
 	    			if(webIsAvailable){
-	    				//notifyAvailability
+
 	    				System.out.println("IS AVAILABLE");
 	    				notificationManager.notifyAvailability();
 	    				lastStatus = true;
 	    				//change tray icon
 	    			}else{
-	    				//notifyUnavailability
+
 	    				System.out.println("NOOOOOOO");
 	    				notificationManager.notifyUnavailability();
 	    				lastStatus = false;

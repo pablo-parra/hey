@@ -32,6 +32,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.google.common.base.Optional;
+
 
 public class BaseTest {
 	//@Inject
@@ -70,7 +72,9 @@ public class BaseTest {
 	
 	@Test
 	public void getConfigProperty_Fail(){
-		assertThat(fileManager.getConfigProperty("asdfasdfasdffasdffasdfareasdf")).isNull();
+		@SuppressWarnings("unchecked")
+		Optional<Object> noProperty = (Optional<Object>) fileManager.getConfigProperty("asdfasdfasdffasdffasdfareasdf");	
+		assertThat(noProperty.isPresent()).isFalse();
 	}
 	
 	@Test
@@ -219,5 +223,6 @@ public class BaseTest {
 		TrayIcon[] iconsAgain = tray.getTrayIcons();
 		assertThat(iconsAgain.length).isEqualTo(1);
 
+		tray.remove(trayIcon);
 	}
 }

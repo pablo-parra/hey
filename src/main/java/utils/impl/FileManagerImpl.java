@@ -83,7 +83,7 @@ public class FileManagerImpl implements FileManager{
 			
 		} catch (Exception e) {
 			System.out.println("ERROR IN getConfigProperty: " + e.getMessage());
-			return null;
+			return Optional.absent();
 		}
 		
 	}
