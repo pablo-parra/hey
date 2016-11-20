@@ -1,15 +1,14 @@
 package core.impl;
 
-import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.inject.Inject;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Optional;
 
 import core.Main;
 import core.api.Manager;
@@ -17,8 +16,6 @@ import utils.api.FileManager;
 import utils.api.NetManager;
 import utils.api.NotificationManager;
 import utils.api.PropertyManager;
-
-import com.google.common.base.Optional;
 
 @Component("mainManager")
 public class ManagerImpl implements Manager{
@@ -43,8 +40,6 @@ public class ManagerImpl implements Manager{
 	public void start(){
 		try {
 			context = new AnnotationConfigApplicationContext(Main.class);
-			
-	        //Byname Autowiring
 	        fileManager = (FileManager)context.getBean("fileManager");
 	        netManager = (NetManager)context.getBean("netManager");
 	        propertyManager = (PropertyManager)context.getBean("propertyManager");
@@ -54,14 +49,12 @@ public class ManagerImpl implements Manager{
 	        Optional<String> urlProperty = (Optional<String>) fileManager.getConfigProperty(URL);
 	        
 	        if(urlProperty.isPresent()){
-
-//				lastStatus = propertyManager.getLastStatus();
-//				webIsAvailable = netManager.connectionAvailable(urlProperty.get().toString());
+				propertyManager.setProperty(URL, urlProperty.get());
 				
 				Optional<Long> timerProperty = (Optional<Long>) fileManager.getConfigProperty(TIMER);
 				
 				if (timerProperty.isPresent()){
-					
+
 					launchHeyProcess(urlProperty.get().toString(), Long.parseLong(timerProperty.get().toString()));
 
 				}else{
@@ -75,7 +68,7 @@ public class ManagerImpl implements Manager{
 
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			// TODO: implement LOG
 			System.out.println(e.getMessage());
 		}finally{
 			if (context != null) context.close();
@@ -88,6 +81,8 @@ public class ManagerImpl implements Manager{
 
 	private void launchHeyProcess(final String url, long loopInterval) {
 
+		System.out.println("URL TO CHECK: "+ url);
+		System.out.println("INTERVAL: " + loopInterval);
 		
 	     TimerTask timerTask = new TimerTask() 
 	     { 

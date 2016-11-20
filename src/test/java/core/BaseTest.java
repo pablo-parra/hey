@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import javax.inject.Inject;
 import javax.swing.JOptionPane;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,63 +42,37 @@ public class BaseTest {
 	private PropertyManager propertyManager;
 	private NetManager netManager;
 	
-	String URL = "url";;
-	String IMG_OK = "/img/ok.png";
-	String IMG_KO = "/img/ko.png";
+	private final String URL = "url";;
+	private final String IMG_OK = "/img/ok.png";
+	private final String IMG_KO = "/img/ko.png";
+	private final String TEST_PROPERTY = "testPropertyForHeyApp";
+			
+	AbstractApplicationContext  context;
 	
 	@Before
 	public void init(){
-		//1
-		//fileManager = new FileManagerImpl();
-		
-		//2
-//		ApplicationContext context = new ClassPathXmlApplicationContext("config/META-INF/beans.xml");
-//	    BeanFactory factory = context;
-//	    fileManager = (FileManager)factory.getBean("fm");
-		
-		//3
-        AbstractApplicationContext  context = new AnnotationConfigApplicationContext(Main.class);
-        
-        //Byname Autowiring
+         context = new AnnotationConfigApplicationContext(Main.class);
+
         fileManager = (FileManager)context.getBean("fileManager");
         propertyManager = (PropertyManager)context.getBean("propertyManager");
         netManager = (NetManager)context.getBean("netManager");
 		
 	}
+	
+	@After
+	public void end(){
+		if (context != null) context.close();
+	}
 
 	@Test
-	public void getConfigProperty(){
-		assertThat(fileManager.getConfigProperty(URL)).isNotNull();
-	}
-	
-	@Test
-	public void getConfigProperty_Fail(){
-		@SuppressWarnings("unchecked")
-		Optional<Object> noProperty = (Optional<Object>) fileManager.getConfigProperty("asdfasdfasdffasdffasdfareasdf");	
-		assertThat(noProperty.isPresent()).isFalse();
-	}
-	
-	@Test
-	public void getSystemProperty(){
-		System.setProperty("hey.test", "ok");
-		assertThat(System.getProperty("hey.test")).isEqualTo("ok");
+	public void propertiesManagement(){
+		propertyManager.setProperty(TEST_PROPERTY, "qwerty");
+		assertThat(propertyManager.getProperty(TEST_PROPERTY)).isEqualTo("qwerty");
 	}
 	
 	@Test
 	public void getSystemProperty_Fail(){
 		assertThat(System.getProperty("notExistingProperty")).isNull();
-	}
-	
-//	@Test
-//	public void getLastStatusAsFalse(){
-//		System.setProperty("hey.status", null);
-//		assertThat(propertyManager.getLastStatus()).isFalse();
-//	}
-	
-	@Test
-	public void getLastStatusAsTrue(){
-		System.setProperty("hey.status", "true");
-		assertThat(propertyManager.getLastStatus()).isTrue();
 	}
 	
 	@Test

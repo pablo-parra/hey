@@ -14,6 +14,7 @@ public class NetManagerImpl implements NetManager{
 		boolean result = false;
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+
 			if (connection.getResponseCode() == 200){
 				result = true;
 			}else {

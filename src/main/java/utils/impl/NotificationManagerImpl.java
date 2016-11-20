@@ -13,20 +13,31 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Optional;
 
+import core.Main;
+import utils.api.FileManager;
+import utils.api.NetManager;
 import utils.api.NotificationManager;
+import utils.api.PropertyManager;
 
 @Component("notificationManager")
 public class NotificationManagerImpl implements NotificationManager {
 
-	String IMG_OK = "/img/ok.png";
-	String IMG_KO = "/img/ko.png";
+	String IMG_OK = "/resources/img/ok.png";
+	String IMG_KO = "/resources/img/ko.png";
 	private String AVAILABLE = "The site is available.";
 	private String UNAVAILABLE = "The site is unavailable";
 	private String HEY = "HEY";
+	private String URL = "url";
+	private String USER_DIR = "user.home";
+	
+	private AbstractApplicationContext  context;	
+	private PropertyManager propertyManager;
 	
 	public void notifyAvailability() {
 		Optional<TrayIcon> heyIcon = getHeyIcon();
@@ -69,13 +80,16 @@ public class NotificationManagerImpl implements NotificationManager {
 			return Optional.of(heyIcon);
 			
 		} catch (Exception e) {
-			System.out.println("No HEY icon...");
+			//System.out.println("No HEY icon...");
 			return Optional.absent();
 		}
 
 	}
 	
 	private Optional<TrayIcon> createHeyIcon(boolean webIsAvailable){
+		context = new AnnotationConfigApplicationContext(Main.class);
+        propertyManager = (PropertyManager)context.getBean("propertyManager");
+
 		try{
 			SystemTray tray = SystemTray.getSystemTray();
 			String image = webIsAvailable ? IMG_OK : IMG_KO;
@@ -84,15 +98,24 @@ public class NotificationManagerImpl implements NotificationManager {
 		    PopupMenu trayPopupMenu = new PopupMenu();
 	
 		    //1t menuitem for popupmenu
-		    MenuItem action = new MenuItem("Show the url");
-		    action.addActionListener(new ActionListener() {
+		    MenuItem info = new MenuItem("Info");
+		    info.addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
-		            JOptionPane.showMessageDialog(null, "Show the url");          
+		            JOptionPane.showMessageDialog(null, "You are checking the site: " + propertyManager.getProperty(URL));          
 		        }
-		    });     
-		    trayPopupMenu.add(action);
-	
-		    //2nd menuitem of popupmenu
+		    });
+		    trayPopupMenu.add(info);
+		    
+		    //2nd menuitem for popupmenu
+		    MenuItem configuration = new MenuItem("Configuration");
+		    configuration.addActionListener(new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		            JOptionPane.showMessageDialog(null, "You can change the site to be checked and its interval editing the config.json file in "+System.getProperty(USER_DIR)+"\\.hey\\");          
+		        }
+		    }); 
+		    trayPopupMenu.add(configuration);
+
+		    //3nd menuitem of popupmenu
 		    MenuItem close = new MenuItem("Close");
 		    close.addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
@@ -111,6 +134,8 @@ public class NotificationManagerImpl implements NotificationManager {
 	    }catch(AWTException awtException){
 	        awtException.printStackTrace();
 	        return Optional.absent();
+	    }finally{
+	    	if (context != null) context.close();
 	    }
 	    
 	    
