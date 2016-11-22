@@ -84,6 +84,12 @@ public class ManagerImpl implements Manager{
 		System.out.println("URL TO CHECK: "+ url);
 		System.out.println("INTERVAL: " + loopInterval);
 		
+		//Initial check
+		if(!netManager.connectionAvailable(url)){
+			notificationManager.notifyUnavailability();
+		}
+		
+		// Loop
 	     TimerTask timerTask = new TimerTask() 
 	     { 
 	         public void run()  
@@ -96,17 +102,12 @@ public class ManagerImpl implements Manager{
 		    		System.out.println(LocalDateTime.now() + " | "+url+" | CHANGE REGISTERED --> WebIsAvailable: " + webIsAvailable + " -- LastStatus: " + lastStatus);
 		    		
 	    			if(webIsAvailable){
-
-	    				System.out.println("IS AVAILABLE");
 	    				notificationManager.notifyAvailability();
 	    				lastStatus = true;
-	    				//change tray icon
+	    				
 	    			}else{
-
-	    				System.out.println("NOOOOOOO");
 	    				notificationManager.notifyUnavailability();
 	    				lastStatus = false;
-	    				//change try icon
 	    			}
 	    			propertyManager.setLastStatus(lastStatus);
 	    		}

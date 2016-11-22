@@ -60,7 +60,7 @@ public class NotificationManagerImpl implements NotificationManager {
 		if(heyIcon.isPresent()){
 			changeHeyIcon(heyIcon.get(), false);
 		}else{
-			Optional<TrayIcon> newHeyIcon = createHeyIcon(true); 
+			Optional<TrayIcon> newHeyIcon = createHeyIcon(false); 
 			heyIcon = newHeyIcon;
 		}
 		
